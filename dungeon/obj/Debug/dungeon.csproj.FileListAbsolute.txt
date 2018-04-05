@@ -1,0 +1,13 @@
+F:\C#\dungeon\dungeon\bin\Debug\dungeon.exe.config
+F:\C#\dungeon\dungeon\bin\Debug\dungeon.exe
+F:\C#\dungeon\dungeon\bin\Debug\dungeon.pdb
+F:\C#\dungeon\dungeon\obj\Debug\dungeon.csprojResolveAssemblyReference.cache
+F:\C#\dungeon\dungeon\obj\Debug\dungeon.exe
+F:\C#\dungeon\dungeon\obj\Debug\dungeon.pdb
+G:\C#\dungeon\dungeon\bin\Debug\dungeon.exe.config
+G:\C#\dungeon\dungeon\bin\Debug\dungeon.exe
+G:\C#\dungeon\dungeon\bin\Debug\dungeon.pdb
+G:\C#\dungeon\dungeon\obj\Debug\dungeon.csprojResolveAssemblyReference.cache
+G:\C#\dungeon\dungeon\obj\Debug\dungeon.csproj.CoreCompileInputs.cache
+G:\C#\dungeon\dungeon\obj\Debug\dungeon.exe
+G:\C#\dungeon\dungeon\obj\Debug\dungeon.pdb
