@@ -11,11 +11,13 @@ namespace dungeon
     {
         static void Main(string[] args)
         {
-
+            
             Console.WriteLine("开始生成");
-            Gmap g=new Gmap(10,20,20);
+            Gmap g=new Gmap(15,30,20);
             g.Print();
             Console.ReadLine();
         }
+
+        
     }
 }

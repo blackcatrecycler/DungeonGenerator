@@ -23,6 +23,29 @@ namespace dungeon
             x = rd.Next(0, All - y);
         }
 
-
+        public static int Roll(int x,int y, Random rd)
+        {
+            return rd.Next(x, y);
+        }
     }
+
+    static class RandomTool<T>
+    {
+        /// <summary>
+        /// Roll an Item in list,and delete it from the list
+        /// </summary>
+        /// <param name="a">List</param>
+        /// <param name="rd">Random seed</param>
+        /// <returns></returns>
+        public static T RollItem(ref List<T> a, Random rd)
+        {
+            
+            T m = default(T);
+            int se=rd.Next(0, a.Count-1);
+            m = a[se];
+            a.Remove(m);
+            return m;
+        }
+    }
+    
 }

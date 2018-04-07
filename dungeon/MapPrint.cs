@@ -29,7 +29,8 @@ namespace dungeon
 
         public static void NumPrint(int x)
         {
-            if (x == 0) WallPrint();
+            if (x == ConstNum.WALL) WallPrint();
+            else if (x == ConstNum.ROAD) RoadPrint();
             else FloorPrint();
         }
 
@@ -42,6 +43,12 @@ namespace dungeon
         public static void FloorPrint()
         {
             Console.BackgroundColor = ConsoleColor.Red;
+            Console.Write(".");
+            Console.BackgroundColor = 0;
+        }
+        public static void RoadPrint()
+        {
+            Console.BackgroundColor = ConsoleColor.DarkRed ;
             Console.Write(".");
             Console.BackgroundColor = 0;
         }

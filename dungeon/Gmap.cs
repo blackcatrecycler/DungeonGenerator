@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace dungeon
 {
+
     public class Gmap
     {
         int roomCount;
@@ -22,7 +23,7 @@ namespace dungeon
         /// <param name="wy">width</param>
         /// <param name="lx">length</param>
         /// <param name="rC">roomCount</param>
-        public Gmap(int wy, int lx, int rC) 
+        public Gmap(int wy, int lx, int rC)
         {
             width = wy;
             length = lx;
@@ -41,25 +42,26 @@ namespace dungeon
                 List<Block> tempDY = new List<Block>();
                 for (int j = 0; j < length; j++)
                 {
-                    tempDY.Add(new Block());
+                    tempDY.Add(new Block(j, i));
                 }
                 gmap.Add(tempDY);
             }//初始化地板
             RandomRooms();//初始化房间
-        } 
+            HuntAndKill();//生成完美迷宫
+        }
 
         void SetRoom(Rooms s)
         {
             rooms.Add(s);
-            for(int i=s.posy;i<(s.posy+s.height);i++)
-                for(int j = s.posx; j < (s.posx + s.length); j++)
+            for (int i = s.posy; i < (s.posy + s.height); i++)
+                for (int j = s.posx; j < (s.posx + s.length); j++)
                 {
-                    gmap[i][j].block = 1;
-                    if (i != s.posy) gmap[i][j].top = 1;
-                    if (i != (s.posy + s.height)) gmap[i][j].bottom = 1;
-                    if (j != s.posx) gmap[i][j].left = 1;
-                    if (j != (s.posx + s.length)) gmap[i][j].right = 1;
-                    if ((gmap[i][j].top == 1) && (gmap[i][j].left == 1)) gmap[i][j].lefttop=1;
+                    gmap[i][j].block = ConstNum.ROOM;
+                    if (i != s.posy) gmap[i][j].top = ConstNum.ROOM;
+                    if (i != (s.posy + s.height)) gmap[i][j].bottom = ConstNum.ROOM;
+                    if (j != s.posx) gmap[i][j].left = ConstNum.ROOM;
+                    if (j != (s.posx + s.length)) gmap[i][j].right = ConstNum.ROOM;
+                    if ((gmap[i][j].top == ConstNum.ROOM) && (gmap[i][j].left == ConstNum.ROOM)) gmap[i][j].lefttop = ConstNum.ROOM;
                 }
 
         }
@@ -70,7 +72,7 @@ namespace dungeon
         /// <param name="x">xPos</param>
         /// <param name="y">yPos</param>
         /// <returns></returns>
-        bool CheckPos(int x,int y)
+        bool CheckPos(int x, int y)
         {
             if (y < width && y >= 0 && x < length && x >= 0) return true;
             else return false;
@@ -81,9 +83,132 @@ namespace dungeon
         /// </summary>
         void HuntAndKill()
         {
-            
-        }
+            bool flag = true;
+            List<Block> usefulBlocks = new List<Block>();
+            List<Block> useBlocks = new List<Block>();
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < length; j++)
+                {
+                    if (gmap[i][j].block == ConstNum.WALL)
+                        usefulBlocks.Add(gmap[i][j]);
+                }
+            }
 
+            while (usefulBlocks.Count > 0)
+            {
+                Block block = new Block();
+                flag = true;
+                for (int i = 0; i < width; i++)
+                {
+                    for (int j = 0; j < length; j++)
+                    {
+                        if (!flag) break;
+                        if (gmap[i][j].block == ConstNum.WALL)
+                        {
+                            if (i != width-1) //下搜索
+                                if (gmap[i + 1][j].block == ConstNum.ROAD)
+                                {
+                                    block = gmap[i][j];
+                                    block.bottom = ConstNum.ROAD;
+                                    block.block = ConstNum.ROAD;
+                                    gmap[i + 1][j].top = ConstNum.ROAD;
+                                    flag = false;
+                                    break;
+                                }
+                            if (j != length-1)//左搜索
+                                if (gmap[i][j + 1].block == ConstNum.ROAD)
+                                {
+                                    block = gmap[i][j];
+                                    block.right = ConstNum.ROAD;
+                                    block.block = ConstNum.ROAD;
+                                    gmap[i][j + 1].left = ConstNum.ROAD;
+                                    flag = false;
+                                    break;
+                                }
+                            if (j != 0)//右搜索
+                                if (gmap[i][j - 1].block == ConstNum.ROAD)
+                                {
+                                    block = gmap[i][j];
+                                    block.left = ConstNum.ROAD;
+                                    block.block = ConstNum.ROAD;
+                                    gmap[i][j - 1].right = ConstNum.ROAD;
+                                    flag = false;
+                                    break;
+                                }
+                            if (i != 0)//上搜索
+                                if (gmap[i - 1][j].block == ConstNum.ROAD)
+                                {
+                                    block = gmap[i][j];
+                                    block.top = ConstNum.ROAD;
+                                    block.block = ConstNum.ROAD;
+                                    gmap[i - 1][j].bottom = ConstNum.ROAD;
+                                    flag = false;
+                                    break;
+                                }
+
+                        }
+                        if (!flag) break;
+                    }
+                }
+                if (flag)
+                {
+                    block = RandomTool<Block>.RollItem(ref usefulBlocks, rd);
+                }
+                else usefulBlocks.Remove(block);
+                //找一个格子进行搜索，如果找不到现有连接那么随机掷一个
+                flag = false;
+                while (!flag)
+                {
+                    List<Block> bk = new List<Block>();
+                    if (block.y != 0)
+                        if (gmap[block.y - 1][block.x].block == ConstNum.WALL) bk.Add(gmap[block.y - 1][block.x]);
+                    if (block.x != 0)
+                        if (gmap[block.y][block.x - 1].block == ConstNum.WALL) bk.Add(gmap[block.y][block.x - 1]);
+                    if (block.y != width-1)
+                        if (gmap[block.y + 1][block.x].block == ConstNum.WALL) bk.Add(gmap[block.y + 1][block.x]);
+                    if (block.x != length-1)
+                        if (gmap[block.y][block.x + 1].block == ConstNum.WALL) bk.Add(gmap[block.y][block.x + 1]);
+                    if (bk.Count != 0)
+                    {
+                        Block temp = RandomTool<Block>.RollItem(ref bk,rd);
+                        usefulBlocks.Remove(temp);
+                        gmap[temp.y][temp.x].block = ConstNum.ROAD;
+                        if (temp.x == block.x)
+                        {
+                            if (temp.y > block.y)
+                            {
+                                gmap[temp.y][temp.x].top = ConstNum.ROAD;
+                                gmap[block.y][block.x].bottom = ConstNum.ROAD;
+
+                            }
+                            else if (temp.y < block.y)
+                            {
+                                gmap[temp.y][temp.x].bottom = ConstNum.ROAD;
+                                gmap[block.y][block.x].top = ConstNum.ROAD;
+                            }
+                        }else if (temp.x > block.x)
+                        {
+                            gmap[temp.y][temp.x].left = ConstNum.ROAD;
+                            gmap[block.y][block.x].right = ConstNum.ROAD;
+                        }
+                        else if(temp.x < block.x)
+                        {
+                            gmap[temp.y][temp.x].right = ConstNum.ROAD;
+                            gmap[block.y][block.x].left = ConstNum.ROAD;
+
+                        }
+                        block = gmap[temp.y][temp.x];
+
+
+                    }
+                    else flag = true;
+
+                }
+
+
+            }
+        }
         /// <summary>
         /// Check if this room could be placed  
         /// </summary>
@@ -109,10 +234,10 @@ namespace dungeon
         /// </summary>
         void RandomRooms()
         {
-            for(int i = 0; i < roomCount; i++)
+            for (int i = 0; i < roomCount; i++)
             {
-                int temp1=0,temp2=0,temp3=0,temp4=0;
-                RandomTool.Roll(ref temp1,ref temp2, width,3,6,rd);
+                int temp1 = 0, temp2 = 0, temp3 = 0, temp4 = 0;
+                RandomTool.Roll(ref temp1, ref temp2, width, 3, 6, rd);
                 RandomTool.Roll(ref temp3, ref temp4, length, 3, 6, rd);
                 CheckRoom(new Rooms(temp3, temp1, temp4, temp2));
             }
@@ -144,14 +269,14 @@ namespace dungeon
         /// <param name="py">posy</param>
         /// <param name="len">length</param>
         /// <param name="hei">height</param>
-        public Rooms(int px,int py,int len,int hei)
+        public Rooms(int px, int py, int len, int hei)
         {
             posx = px;
             posy = py;
             length = len;
             height = hei;
         }
-        
+
         /// <summary>
         /// Check if overlap each other;
         /// </summary>
@@ -181,7 +306,7 @@ namespace dungeon
             bool Bottom = this.posy >= ro.posy;
             bool Left = this.posx >= ro.posx;
             bool Right = (this.posx + this.length) <= (ro.posx + ro.length);
-            if(Top && Bottom && Left && Right)
+            if (Top && Bottom && Left && Right)
             {
                 return true;
             }
@@ -193,14 +318,18 @@ namespace dungeon
     }
     public class Block
     {
-        public int top { get; set; } = 0;
-        public int bottom { get; set; } = 0;
-        public int left { get; set; } = 0;
-        public int right { get; set; } = 0;
-        public int block { get; set; } = 0;
-        public int lefttop { get; set; } = 0;
+        public int top { get; set; } = ConstNum.WALL;
+        public int bottom { get; set; } = ConstNum.WALL;
+        public int left { get; set; } = ConstNum.WALL;
+        public int right { get; set; } = ConstNum.WALL;
+        public int block { get; set; } = ConstNum.WALL;
+        public int lefttop { get; set; } = ConstNum.WALL;
+        public int x { get; set; }
+        public int y { get; set; }
+        public Block(int lx, int wy) { x = lx; y = wy; }
+        public Block() { }
 
     }
 
-    
+
 }
