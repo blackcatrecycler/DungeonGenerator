@@ -15,6 +15,8 @@
 
 本项目为地牢生成器，由C#语言编写，该算法由[Bob Nystrom](http://journal.stuffwithstuff.com/2014/12/21/rooms-and-mazes/)启发，并作为我的毕业课设的基础组件
 
+该项目的Unity3d解决方案[点击这里](https://github.com/blackcatrecycler/DungeonGenerator-Unity)
+
 ## 项目思想
 
 在生成地牢的时候，我们可以遵循以下原则
@@ -50,5 +52,6 @@
 
 ## 更新信息
 
+- 2018.4.9 添加了该算法的Unity3d方案，最近要制作一个Java web项目暂时搁置
 - 2018.4.7 完善猎杀算法,但仍然出现大面积
 - 2018.4.6 增加了道路，使用猎杀算法,此时为房间和迷宫互相独立
